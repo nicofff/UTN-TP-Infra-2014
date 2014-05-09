@@ -31,7 +31,7 @@ mysqladmin -u root password InfraYVirt
 git clone  https://github.com/nicofff/inscripciones.git /var/www/html
 
 mysql -u root -pInfraYVirt -e "CREATE DATABASE inscripciones;"
-mysql -u root -pInfraYVirt -e "GRANT ALL PRIVILEGES on inscripciones.* to 'inscripciones'@'%' identified by 'inscripciones'; FLUSH PRIVILEGES;" # Crear usuario con acceso desde cualquier lado
+mysql -u root -pInfraYVirt -e "GRANT ALL PRIVILEGES on inscripciones.* to 'inscripciones'@'%' identified by 'inscripciones'; GRANT ALL PRIVILEGES on inscripciones.* to 'inscripciones'@'localhost' identified by 'inscripciones'; FLUSH PRIVILEGES;" # Crear usuario con acceso desde cualquier lado
 mysql -u root -pInfraYVirt inscripciones < /var/www/html/dump.sql
 
 
