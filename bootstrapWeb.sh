@@ -19,8 +19,8 @@ sleep 10
 mkdir /mnt/mysql
 mount.glusterfs web:/dbstorage /mnt/mysql
 
-cp /vagrant/config/my.cnf /etc/my.cnf
 yum install httpd mysql mysql-server php php-common php-devel php-cli php-mysql php-mcrypt git -y
+cp /vagrant/config/my.cnf /etc/my.cnf
 
 git clone  https://github.com/nicofff/inscripciones.git /var/www/html
 service httpd start

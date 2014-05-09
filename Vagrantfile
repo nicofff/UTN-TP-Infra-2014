@@ -20,11 +20,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   config.vm.define "web" do |web|
     web.vm.provision :shell, :path => "bootstrapWeb.sh"
+    web.vm.hostname = "web"
     web.vm.network "private_network", ip: "192.168.100.10"
   end
 
   config.vm.define "db" do |db|
     db.vm.provision :shell, :path => "bootstrapDb.sh"
+    db.vm.hostname = "db"
     db.vm.network "private_network", ip: "192.168.100.11"
   end
 end
