@@ -1,16 +1,25 @@
 #!/usr/bin/env bash
 
-#Setup Gluster repository
+# Setup Extra repositories
 cd /etc/yum.repos.d/
-wget http://download.gluster.org/pub/gluster/glusterfs/3.4/3.4.0/EPEL.repo/glusterfs-epel.repo
-wget http://download.opensuse.org/repositories/network:/ha-clustering:/Stable/CentOS_CentOS-6/network:ha-clustering:Stable.repo
+wget http://download.gluster.org/pub/gluster/glusterfs/3.4/3.4.0/EPEL.repo/glusterfs-epel.repo # Gluster Repo
+wget http://download.opensuse.org/repositories/network:/ha-clustering:/Stable/CentOS_CentOS-6/network:ha-clustering:Stable.repo #High Availability tools repo
 
-# Set Up HOSTS
+# Setup HOSTS
 echo "192.168.100.10 	web" >> /etc/hosts
 echo "127.0.0.1	db" >> /etc/hosts
 
-# Set Up Gluster
-yum install glusterfs glusterfs-fuse glusterfs-rdma glusterfs-server -y
+# Intall Gluster, LAMP, Cluster Management, NTP
+yum install glusterfs glusterfs-fuse glusterfs-rdma glusterfs-server \
+	httpd mysql mysql-server php php-common php-devel php-cli php-mysql php-mcrypt \
+	git nano ntp ntpdate \
+	pacemaker corosync crmsh -y
+
+# Start NTP
+service ntpd start
+chkconfig ntpd on
+
+# Setup Gluster
 service glusterd start
 until gluster peer probe web
 do
@@ -18,39 +27,46 @@ do
 	sleep 5;
 done
 
-gluster volume create dbstorage replica 2 web:/data db:/data force #Configuro que la data se replique entre los 2 servers
+gluster volume create dbstorage replica 2 web:/data db:/data force # Setup Data replication between the 2 nodes
 gluster volume start dbstorage
 mkdir /mnt/mysql
-mount.glusterfs db:/dbstorage /mnt/mysql # Monto mi storage replicado en /mnt/mysql (que esta seteado como datadir de mysql en el my.cnf)
+mount.glusterfs db:/dbstorage /mnt/mysql # /mnt/mysql is set up as the datadir, both in my.cnf and in the cluster resource definition
+echo "db:/dbstorage /mnt/mysql glusterfs defaults,_netdev 0 0" >> /etc/fstab
 
-# Set up LAMP
-yum install httpd mysql mysql-server php php-common php-devel php-cli php-mysql php-mcrypt git nano -y
+chkconfig --levels 235 glusterd on # Start glusterd on boot
+
+# Copy Config files
+
 cp /vagrant/config/my.cnf /etc/my.cnf
-service mysqld start
-mysqladmin -u root password InfraYVirt
+cp /vagrant/config/corosync.conf /etc/corosync/
+cp /vagrant/config/httpd.conf /etc/httpd/conf/httpd.conf 
+cp /vagrant/config/mysql /usr/lib/ocf/resource.d/heartbeat/mysql # Mysql monitoring script. Default one doesn't work
 
+# Checkout App
 git clone  https://github.com/nicofff/inscripciones.git /var/www/html
 
+# Set up Mysql
+service mysqld start
+mysqladmin -u root password InfraYVirt # Set root password
 mysql -u root -pInfraYVirt -e "CREATE DATABASE inscripciones;"
-mysql -u root -pInfraYVirt -e "GRANT ALL PRIVILEGES on inscripciones.* to 'inscripciones'@'%' identified by 'inscripciones'; GRANT ALL PRIVILEGES on inscripciones.* to 'inscripciones'@'localhost' identified by 'inscripciones'; FLUSH PRIVILEGES;" # Crear usuario con acceso desde cualquier lado
-mysql -u root -pInfraYVirt inscripciones < /var/www/html/dump.sql
+mysql -u root -pInfraYVirt -e "GRANT ALL PRIVILEGES on inscripciones.* to 'inscripciones'@'%' identified by 'inscripciones'; GRANT ALL PRIVILEGES on inscripciones.* to 'inscripciones'@'localhost' identified by 'inscripciones'; FLUSH PRIVILEGES;" # Create user, give access from anywhare
+mysql -u root -pInfraYVirt inscripciones < /var/www/html/dump.sql # Import database dump
 
-service mysqld stop
+service mysqld stop # Stop Mysql, managed by cluster
 
-# Set up Cluster Management. Common
-
-yum install pacemaker corosync crmsh -y
-cp /vagrant/config/corosync.conf /etc/corosync/
-cp /vagrant/config/httpd.conf /etc/httpd/conf/httpd.conf
-cd /tmp/
-wget --no-check-certificate https://raw.githubusercontent.com/y-trudeau/resource-agents/master/heartbeat/mysql
-cp mysql /usr/lib/ocf/resource.d/heartbeat/mysql
+# Setup Cluster Management. Common
 
 service corosync start
 service pacemaker start
 
+# Setup Cluster Management. Cluster Config
 
-# Set up Cluster Management. Cluster Config
+
+until crm status | grep Online |grep web
+do
+	echo "waiting for web to join the cluter";
+	sleep 5;
+done
 
 crm configure property stonith-enabled=false
 crm configure property no-quorum-policy=ignore
@@ -61,3 +77,6 @@ crm configure order apache-after-ip mandatory: ClusterIP WebSite
 crm configure primitive MySQL ocf:heartbeat:mysql params config=/etc/my.cnf datadir=/mnt/mysql test_passwd=InfraYVirt op monitor interval="30s" op start timeout="120s" op stop timeout="120s"
 crm configure location prefer-db-MySQL MySQL 50: db
 crm configure location prefer-web-WebSite WebSite 50: web
+
+chkconfig corosync on
+chkconfig pacemaker on
