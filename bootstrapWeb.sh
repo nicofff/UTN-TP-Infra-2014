@@ -28,9 +28,9 @@ do
 done
 
 sleep 10 # Wait for configuration to end on the other node (TODO: do this better)
-mkdir /mnt/mysql
-mount.glusterfs web:/dbstorage /mnt/mysql
-echo "web:/dbstorage /mnt/mysql glusterfs defaults,_netdev 0 0" >> /etc/fstab
+#mkdir /mnt/mysql
+#mount.glusterfs web:/dbstorage /mnt/mysql
+#echo "web:/dbstorage /mnt/mysql glusterfs defaults,_netdev 0 0" >> /etc/fstab
 
 chkconfig --levels 235 glusterd on
 

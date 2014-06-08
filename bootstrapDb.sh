@@ -29,9 +29,9 @@ done
 
 gluster volume create dbstorage replica 2 web:/data db:/data force # Setup Data replication between the 2 nodes
 gluster volume start dbstorage
-mkdir /mnt/mysql
-mount.glusterfs db:/dbstorage /mnt/mysql # /mnt/mysql is set up as the datadir, both in my.cnf and in the cluster resource definition
-echo "db:/dbstorage /mnt/mysql glusterfs defaults,_netdev 0 0" >> /etc/fstab
+#mkdir /mnt/mysql
+#mount.glusterfs db:/dbstorage /mnt/mysql # /mnt/mysql is set up as the datadir, both in my.cnf and in the cluster resource definition
+#echo "db:/dbstorage /mnt/mysql glusterfs defaults,_netdev 0 0" >> /etc/fstab
 
 chkconfig --levels 235 glusterd on # Start glusterd on boot
 
@@ -71,10 +71,13 @@ done
 crm configure property stonith-enabled=false
 crm configure property no-quorum-policy=ignore
 crm configure primitive ClusterIP ocf:heartbeat:IPaddr2 params ip=192.168.1.205 cidr_netmask=24 op monitor interval=30s
+crm configure primitive gluster-share  Filesystem params device="localhost:/dbstorage" directory="/mnt/mysql" fstype=glusterfs
+crm configure clone gluster-share-clone gluster-share meta interleave=true
 crm configure primitive WebSite ocf:heartbeat:apache params configfile=/etc/httpd/conf/httpd.conf op monitor interval=1min
 crm configure colocation website-with-ip INFINITY: WebSite ClusterIP
 crm configure order apache-after-ip mandatory: ClusterIP WebSite
 crm configure primitive MySQL ocf:heartbeat:mysql params config=/etc/my.cnf datadir=/mnt/mysql test_passwd=InfraYVirt op monitor interval="30s" op start timeout="120s" op stop timeout="120s"
+#crm configure order gluster-before-mysql mandatory: gluster-share-clone MySQL
 crm configure location prefer-db-MySQL MySQL 50: db
 crm configure location prefer-web-WebSite WebSite 50: web
 
