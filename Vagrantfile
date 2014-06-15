@@ -29,4 +29,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     db.vm.network "private_network", ip: "192.168.100.11"
     db.vm.network "public_network", ip: "192.168.1.201"
   end
+  
+   config.vm.define "monitor" do |monitor|
+    monitor.vm.provision :shell, :path => "bootstrapMonitor.sh"
+    monitor.vm.hostname = "monitor"
+    monitor.vm.network "private_network", ip: "192.168.100.12"
+	monitor.vm.network "public_network", ip: "192.168.1.202"
+  end
 end
