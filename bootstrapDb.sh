@@ -1,31 +1,13 @@
 #!/usr/bin/env bash
 
-# Setup Extra repositories
-cd /etc/yum.repos.d/
-wget http://download.gluster.org/pub/gluster/glusterfs/3.4/3.4.0/EPEL.repo/glusterfs-epel.repo # Gluster Repo
-wget http://download.opensuse.org/repositories/network:/ha-clustering:/Stable/CentOS_CentOS-6/network:ha-clustering:Stable.repo #High Availability tools repo
+echo "*********** Initiating Db VM"
+
+source /vagrant/bootstrapCommons.sh
 
 # Setup HOSTS
 echo "192.168.100.10 	web" >> /etc/hosts
 echo "127.0.0.1	db" >> /etc/hosts
 
-# Intall Gluster, LAMP, Cluster Management, NTP
-yum install glusterfs glusterfs-fuse glusterfs-rdma glusterfs-server \
-	httpd mysql mysql-server php php-common php-devel php-cli php-mysql php-mcrypt \
-	git nano ntp ntpdate \
-	pacemaker corosync crmsh -y
-
-# Start NTP
-service ntpd start
-chkconfig ntpd on
-
-# Setup Gluster
-service glusterd start
-until gluster peer probe web
-do
-	echo "waiting for gluster to come up in Web Server";
-	sleep 5;
-done
 
 gluster volume create dbstorage replica 2 web:/data db:/data force # Setup Data replication between the 2 nodes
 gluster volume start dbstorage
@@ -61,10 +43,9 @@ service pacemaker start
 
 # Setup Cluster Management. Cluster Config
 
-
 until crm status | grep Online |grep web
 do
-	echo "waiting for web to join the cluter";
+	echo "*********** Waiting for web to join the cluter";
 	sleep 5;
 done
 
