@@ -1,0 +1,5 @@
+#!/bin/bash 
+
+SECONDS=15
+ATTEMPTS=1
+WEB_HOST="192.168.100.10"
