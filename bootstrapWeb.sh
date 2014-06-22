@@ -8,13 +8,16 @@ echo "192.168.100.11	db" >> /etc/hosts
 
 source /vagrant/bootstrapCommons.sh
 
-echo "***********Initiating Apache"
-service httpd start
+until service drbd status | grep UpToDate/UpToDate
+do 
+	sleep 5;
+	echo "waiting for drbd to finish syncing";
+done
 
-echo "***********Web VM bootstrap finished"
+sleep 10
 
-#echo "***********Sleeping 10 seconds"
-#sleep 10 # Wait for configuration to end on the other node (TODO: do this better)
-#mkdir /mnt/mysql
-#mount.glusterfs web:/dbstorage /mnt/mysql
-#echo "web:/dbstorage /mnt/mysql glusterfs defaults,_netdev 0 0" >> /etc/fstab
+service drbd stop
+
+
+service corosync start
+service pacemaker start
