@@ -30,10 +30,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     db.vm.network "public_network", ip: "192.168.1.201"
   end
   
-   config.vm.define "monitor" do |monitor|
+  config.vm.define "monitor" do |monitor|
     monitor.vm.provision :shell, :path => "bootstrapMonitor.sh"
     monitor.vm.hostname = "monitor"
     monitor.vm.network "private_network", ip: "192.168.100.12"
-	monitor.vm.network "public_network", ip: "192.168.1.202"
+    monitor.vm.network "public_network", ip: "192.168.1.202"
+  end
+
+  config.vm.define "dr" do |dr|
+    dr.vm.box = "chef/centos-6.5-i386"
+    dr.vm.provision :shell, :path => "bootstrapDR.sh"
+    dr.vm.hostname = "dr"
+    dr.vm.network "private_network", ip: "192.168.100.13"
+    dr.vm.network "public_network", ip: "192.168.1.203"
   end
 end
