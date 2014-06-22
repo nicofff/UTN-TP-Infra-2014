@@ -45,8 +45,8 @@ sub runscript {
     my $script = shift || "uptime";
 
     #$cmd = './'$script.'.sh';  
-    my $out=qx($script 2>&1);
+    my $out=qx(./$script 2>&1);
     my $r_c=$?;
-    return $r_c.":".$out;
+    return $r_c.":::".$out;
 
 }
