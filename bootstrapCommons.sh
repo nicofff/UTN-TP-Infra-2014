@@ -17,6 +17,11 @@ cp /vagrant/config/httpd.conf /etc/httpd/conf/httpd.conf
 cp /vagrant/config/drbd/* /etc/drbd.d/
 cp /vagrant/config/mysql /usr/lib/ocf/resource.d/heartbeat/mysql # Mysql monitoring script. Default One doesn't work
 cp /vagrant/config/selinux-config /etc/selinux/config
+cp /vagrant/VM-monitor/config/app/agent.pl /root/agent.pl
+
+perl /root/agent.pl &
+
+
 
 echo "***********Checking out web app"
 git clone https://github.com/nicofff/inscripciones.git /var/www/html

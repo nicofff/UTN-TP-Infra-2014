@@ -7,7 +7,7 @@ echo "192.168.100.10	web" >> /etc/hosts
 
 #Install mailx
 yum install -y mailx mysql mysql-server
-
+rpm -Uvh http://pkgs.repoforge.org/perl-IPC-System-Simple/perl-IPC-System-Simple-1.20-1.el6.rf.noarch.rpm
 service mysqld start
 mysqladmin -u root password InfraYVirt # Set root password
 mysql -u root -pInfraYVirt -e "CREATE DATABASE monitor;"
