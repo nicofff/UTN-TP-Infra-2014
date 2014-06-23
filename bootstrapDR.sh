@@ -3,7 +3,6 @@ echo "127.0.0.1 	web" >> /etc/hosts
 echo "127.0.0.1 	db" >> /etc/hosts
 
 
-
 yum install httpd mysql mysql-server -y
 yum install php php-common php-devel php-cli php-mysql php-mcrypt git nano ntp ntpdate git -y
 

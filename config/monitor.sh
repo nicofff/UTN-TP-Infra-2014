@@ -13,7 +13,6 @@ echo "WEB_HOST =" $WEB_HOST
 while :
 do
 
-
 #! Toma la salida del ping. Si la misma figura "icmp" la cantidad de lineas sera 1. 
 ping -c $ATTEMPTS $WEB_HOST 
 

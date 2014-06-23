@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 echo "*********** Downloading other repositories..."
 cd /etc/yum.repos.d/
 rpm -Uvh ftp://ftp-stud.fht-esslingen.de/pub/Mirrors/centos/5.10/extras/i386/RPMS/xfsprogs-2.9.4-1.el5.centos.i386.rpm

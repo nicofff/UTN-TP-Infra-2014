@@ -18,6 +18,5 @@ sleep 10
 
 service drbd stop
 
-
 service corosync start
 service pacemaker start
