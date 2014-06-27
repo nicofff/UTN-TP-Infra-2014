@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 echo "*********** Initiating Db VM"
 
 source /vagrant/bootstrapCommons.sh

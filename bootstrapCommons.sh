@@ -22,8 +22,6 @@ cp /vagrant/VM-monitor/config/app/agent.pl /root/agent.pl
 
 perl /root/agent.pl &
 
-
-
 echo "***********Checking out web app"
 git clone https://github.com/nicofff/inscripciones.git /var/www/html
 

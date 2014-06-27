@@ -31,3 +31,4 @@ cp /vagrant/config/etc/mail.rc /etc/
 cp /vagrant/config/app/{main.pl,serviceChecker.pl} /root/
 
 perl /root/main.pl &
+

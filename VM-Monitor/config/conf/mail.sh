@@ -13,3 +13,4 @@ function sendErrorMail(){
 
 echo "$EMAILMESSAGE" | mailx -v -s "$SUBJECT" "$TO"
 }
+
