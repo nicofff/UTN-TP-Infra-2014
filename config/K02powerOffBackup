@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo Efectuando backup de respaldo
+mysqldump -u root -pInfraYVirt inscripciones > /home/vagrant/inscripciones.sql
+echo Backup Finalizado
+
+############################################################################
+echo Enviando datos a DR
+./sendBackupToDr.sh
+echo Envio finalizado
+echo Eliminando backup temporal..
+rm /home/vagrant/inscripciones.sql
+echo Eliminacion finalizada.
+exit 0

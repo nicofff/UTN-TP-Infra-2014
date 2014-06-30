@@ -11,6 +11,9 @@ yum install httpd mysql mysql-server -y
 yum install php php-common php-devel php-cli php-mysql php-mcrypt git nano ntp ntpdate pacemaker corosync pcs -y
 yum install drbd84-utils  kmod-drbd84 -y
 
+echo "*********** Installing expect..."
+yum install expect
+
 echo "*********** Copying configuration scripts..."
 cp /vagrant/config/my.cnf /etc/my.cnf
 cp /vagrant/config/corosync.conf /etc/corosync/

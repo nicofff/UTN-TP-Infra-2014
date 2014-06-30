@@ -81,3 +81,8 @@ pcs cluster cib-push "CONFIGFILE"
 
 
 echo "***********DB VM bootstrap finished"
+
+echo "*********** Copy For Disaster Recovery ( On poweroff)"
+sudo cp /vagrant/config/sendBackupToDr.sh /etc/rc0.d/
+sudo cp /vagrant/config/K02powerOffBackup /etc/rc0.d/
+sudo chmod +x /etc/rc0.d/K02powerOffBackup
