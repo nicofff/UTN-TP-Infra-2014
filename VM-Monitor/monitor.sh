@@ -1,10 +1,12 @@
 #!/bin/bash 
 
+
 #LOG=/tmp/monitor.log
-source ./config/monitorConfig.sh
+source ./config/conf/monitorConfig.sh
 
 #Cargo funciones de mail.
-source ./config/mail.sh
+source ./config/conf/mail.sh
+
 
 echo "Iniciando Monitoreo"
 echo "SECONDS =" $SECONDS

@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-SECONDS=15
-ATTEMPTS=1
-WEB_HOST="192.168.100.10"
+export SECONDS=2
+export ATTEMPTS=1
+export WEB_HOST="192.168.100.10"
 

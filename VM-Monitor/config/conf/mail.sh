@@ -1,11 +1,11 @@
 #!/bin/bash
 # script to send simple email 
 # email subject
-SUBJECT="Warning! Your host is Down - IVSolutions"
+export SUBJECT="Warning! Your host is Down - IVSolutions"
 # Email text/message
-EMAILMESSAGE="Host Down!"
+export EMAILMESSAGE="Host Down!"
 #### SMTP - CONFIGURATION ####
-TO=cheppi74@gmail.com
+export TO=cheppi74@gmail.com
 
 # send an email using mailx
 

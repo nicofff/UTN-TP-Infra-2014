@@ -35,7 +35,7 @@ sub doCheck{
 	%check = @_;
 	my $address = %check->{address};
 	my $command = %check->{check_command};
-	my $retval = capture(EXIT_ANY,"perl serviceChecker.pl $address $command");
+	my $retval = capture(EXIT_ANY,"perl /root/serviceChecker.pl $address $command");
     return $retval;
 }
 

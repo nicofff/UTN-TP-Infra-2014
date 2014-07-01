@@ -3,7 +3,8 @@ use IO::Socket::INET;
 # auto-flush on socket
 sub clientlog {
 	# TODO: Implement logging
-	return
+ 	print shift, "\n";
+	return;
 }
 
 sub docheck {
@@ -44,5 +45,6 @@ $| = 1;
 my $host = shift  || "127.0.0.1";
 my $service = shift || "uptime";
 
-
+print "host:", $host, "\n";
+print "service:", $service, "\n";
 print docheck($host,$service);
