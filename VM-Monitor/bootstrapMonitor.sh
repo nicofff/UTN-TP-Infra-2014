@@ -5,15 +5,13 @@ echo "127.0.0.1		monitor" >> /etc/hosts
 echo "192.168.100.11	db" >> /etc/hosts
 echo "192.168.100.10	web" >> /etc/hosts
 
-#Install mailx
-yum install -y mailx mysql mysql-server
+echo "*********** Installing software..."
+yum install -y httpd php php-common php-devel php-cli php-mysql php-mcrypt mailx mysql mysql-server
 rpm -Uvh http://pkgs.repoforge.org/perl-IPC-System-Simple/perl-IPC-System-Simple-1.20-1.el6.rf.noarch.rpm
-service mysqld start
-mysqladmin -u root password InfraYVirt # Set root password
-mysql -u root -pInfraYVirt -e "CREATE DATABASE monitor;"
-mysql -u root -pInfraYVirt -e "GRANT ALL PRIVILEGES on monitor.* to 'monitor'@'%' identified by 'monitor'; GRANT ALL PRIVILEGES on monitor.* to 'monitor'@'localhost' identified by 'monitor'; FLUSH PRIVILEGES;" # Create user, give access from anywhare
-mysql -u root -pInfraYVirt monitor < /vagrant/config/monitor.sql 
+s
 
+echo "*********** Copying configuration scripts..."
+cp /vagrant/config/conf/httpd.conf /etc/httpd/conf/httpd.conf
 #Copy the config
 # * mail.sh: Lib para enviar mails usando Gmail SMTP 
 # * monitorConfig
@@ -30,5 +28,13 @@ cp /vagrant/config/etc/mail.rc /etc/
 
 cp /vagrant/config/app/{main.pl,serviceChecker.pl} /root/
 
-perl /root/main.pl &
+echo "*********** Starting apache & mysql ..."
+service httpd start
+service mysqld start
+mysqladmin -u root password InfraYVirt # Set root password
+mysql -u root -pInfraYVirt -e "CREATE DATABASE monitor;"
+mysql -u root -pInfraYVirt -e "GRANT ALL PRIVILEGES on monitor.* to 'monitor'@'%' identified by 'monitor'; GRANT ALL PRIVILEGES on monitor.* to 'monitor'@'localhost' identified by 'monitor'; FLUSH PRIVILEGES;" # Create user, give access from anywhare
+mysql -u root -pInfraYVirt monitor < /vagrant/config/monitor.sql 
 
+echo "*********** Starting main serviceChecker ..."
+perl /root/main.pl &
